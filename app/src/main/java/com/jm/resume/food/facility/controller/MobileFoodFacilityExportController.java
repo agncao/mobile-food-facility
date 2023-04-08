@@ -13,13 +13,13 @@ import java.util.List;
 @Slf4j
 @RestController
 @Validated
-@RequestMapping("/food")
+@RequestMapping("/api/food")
 public class MobileFoodFacilityExportController {
     @Resource
     private MobileFoodFacilityExportService mobileFoodFacilityExportService;
 
     @CrossOrigin
-    @PostMapping("/list")
+    @GetMapping("/list")
     public Mono<List<MobileFoodFacility>> listByFacilityTyp() {
         log.info("listByFacilityTypeAndApplicant request");
         return mobileFoodFacilityExportService.findAllByFacilityTypeAndApplicant("Truck")

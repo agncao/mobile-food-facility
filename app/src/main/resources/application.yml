@@ -15,7 +15,9 @@ spring:
   jackson:
     serialization:
       fail-on-empty-beans: false
-
+app:
+  export:
+    enable: false
 #timeout setting for httpClient
 timeout:
   httpClient:

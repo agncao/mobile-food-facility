@@ -1,12 +1,11 @@
 package com.jm.resume.food.facility.repository;
 
 import com.jm.resume.food.facility.domain.MobileFoodFacility;
+import com.jm.resume.food.facility.utils.ClassPathFileReader;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
-import org.springframework.stereotype.Component;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -17,42 +16,42 @@ public class MobileFoodFacilityCSVRepository {
     // 从 classpath 下的 csv 文件中读取数据, 并且打印出数据所在cvs中的行数
     public static List<MobileFoodFacility> readCSV() {
         List<MobileFoodFacility> mobileFoodFacilities = new ArrayList<>();
-        try(Reader reader = new InputStreamReader(new FileInputStream("src/main/resources/mobile_food_facility_permits.csv"))) {
+        try(Reader reader = new InputStreamReader(ClassPathFileReader.getCsvFile("Mobile_Food_Facility_Permit.csv"))) {
 
             CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT.withFirstRecordAsHeader());
             for (CSVRecord csvRecord : csvParser) {
 //                System.out.println(csvRecord.getRecordNumber());//打印本行行数
 
                 MobileFoodFacility mobileFoodFacility = new MobileFoodFacility();
-                mobileFoodFacility.setId(Long.parseLong(csvRecord.get(0)));
-                mobileFoodFacility.setApplicant(csvRecord.get("applicant"));
-                mobileFoodFacility.setFacilityType(csvRecord.get("facilitytype"));
+                mobileFoodFacility.setLocationId(Integer.parseInt(csvRecord.get(0)));
+                mobileFoodFacility.setApplicant(csvRecord.get("Applicant"));
+                mobileFoodFacility.setFacilityType(csvRecord.get("FacilityType"));
                 mobileFoodFacility.setCnn(csvRecord.get("cnn"));
-                mobileFoodFacility.setLocationDescription(csvRecord.get("locationdescription"));
-                mobileFoodFacility.setAddress(csvRecord.get("address"));
+                mobileFoodFacility.setLocationDescription(csvRecord.get("LocationDescription"));
+                mobileFoodFacility.setAddress(csvRecord.get("Address"));
                 mobileFoodFacility.setBlockLot(csvRecord.get("blocklot"));
                 mobileFoodFacility.setBlock(csvRecord.get("block"));
                 mobileFoodFacility.setLot(csvRecord.get("lot"));
                 mobileFoodFacility.setPermit(csvRecord.get("permit"));
-                mobileFoodFacility.setStatus(csvRecord.get("status"));
-                mobileFoodFacility.setFoodItems(csvRecord.get("fooditems"));
-                mobileFoodFacility.setX(csvRecord.get("x"));
-                mobileFoodFacility.setY(csvRecord.get("y"));
-                mobileFoodFacility.setLatitude(csvRecord.get("latitude"));
-                mobileFoodFacility.setLongitude(csvRecord.get("longitude"));
-                mobileFoodFacility.setSchedule(csvRecord.get("schedule"));
+                mobileFoodFacility.setStatus(csvRecord.get("Status"));
+                mobileFoodFacility.setFoodItems(csvRecord.get("FoodItems"));
+                mobileFoodFacility.setX(csvRecord.get("X"));
+                mobileFoodFacility.setY(csvRecord.get("Y"));
+                mobileFoodFacility.setLatitude(csvRecord.get("Latitude"));
+                mobileFoodFacility.setLongitude(csvRecord.get("Longitude"));
+                mobileFoodFacility.setSchedule(csvRecord.get("Schedule"));
                 mobileFoodFacility.setDaysHours(csvRecord.get("dayshours"));
-                mobileFoodFacility.setNoiSent(csvRecord.get("noisent"));
-                mobileFoodFacility.setApproved(csvRecord.get("approved"));
-                mobileFoodFacility.setReceived(csvRecord.get("received"));
-                mobileFoodFacility.setPriorPermit(csvRecord.get("priorpermit"));
-                mobileFoodFacility.setExpirationDate(csvRecord.get("expirationdate"));
-                mobileFoodFacility.setLocation(csvRecord.get("location"));
-                mobileFoodFacility.setFirePreventionDistricts(csvRecord.get("firepreventiondistricts"));
-                mobileFoodFacility.setPoliceDistricts(csvRecord.get("policedistricts"));
-                mobileFoodFacility.setSupervisorDistricts(csvRecord.get("supervisordistricts"));
-                mobileFoodFacility.setZipCodes(csvRecord.get("zipcodes"));
-                mobileFoodFacility.setNeighborhoods(csvRecord.get("neighborhoods"));
+                mobileFoodFacility.setNoiSent(csvRecord.get("NOISent"));
+                mobileFoodFacility.setApproved(csvRecord.get("Approved"));
+                mobileFoodFacility.setReceived(csvRecord.get("Received"));
+                mobileFoodFacility.setPriorPermit(csvRecord.get("PriorPermit"));
+                mobileFoodFacility.setExpirationDate(csvRecord.get("ExpirationDate"));
+                mobileFoodFacility.setLocation(csvRecord.get("Location"));
+                mobileFoodFacility.setFirePreventionDistricts(csvRecord.get("Fire Prevention Districts"));
+                mobileFoodFacility.setPoliceDistricts(csvRecord.get("Police Districts"));
+                mobileFoodFacility.setSupervisorDistricts(csvRecord.get("Supervisor Districts"));
+                mobileFoodFacility.setZipCodes(csvRecord.get("Zip Codes"));
+                mobileFoodFacility.setNeighborhoods(csvRecord.get("Neighborhoods (old)"));
                 mobileFoodFacilities.add(mobileFoodFacility);
             }
         }catch (IOException e) {
