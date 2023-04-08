@@ -2,7 +2,6 @@ version: '3'
 
 volumes:
     vm_postgres: { }
-    redis_data: { }
 
 services:
     postgres:
@@ -31,19 +30,3 @@ services:
         entrypoint: [ "bash", "/var/lib/postgresql/migration.sh" ]
 #        depends_on:
 #            - postgres
-
-    redis-slave-1:
-        image: redis:6.2
-        ports:
-            - 16379:6379
-        volumes:
-            - ./config/redis-slave.conf:/usr/local/etc/redis/redis.conf
-        command: redis-server /usr/local/etc/redis/redis.conf
-
-    redis-slave-2:
-        image: redis:6.2
-        ports:
-            - 26379:6379
-        volumes:
-            - ./config/redis-slave.conf:/usr/local/etc/redis/redis.conf
-        command: redis-server /usr/local/etc/redis/redis.conf

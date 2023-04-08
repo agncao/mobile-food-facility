@@ -1,28 +1,20 @@
 server:
   port: 8081
 
-enable:
-  # enabled by default as we will be using pg
-  pg: true
-
-
 spring:
   application:
     name: food-facility
   codec:
     max-in-memory-size: 10MB
   r2dbc:
-    url: r2dbc:postgresql://0.0.0.0:5432/socol
+    url: r2dbc:postgresql://localhost:5432/socol
     username: postgres
     password: password
     driver-class-name: org.postgresql.Driver
+
   jackson:
     serialization:
       fail-on-empty-beans: false
-  data:
-    redis:
-      repositories:
-        enabled: false
 
 #timeout setting for httpClient
 timeout:
