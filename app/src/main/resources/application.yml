@@ -17,7 +17,7 @@ spring:
       fail-on-empty-beans: false
 app:
   export:
-    enable: false
+    enable: true
 #timeout setting for httpClient
 timeout:
   httpClient:
