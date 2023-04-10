@@ -3,7 +3,7 @@
 until pg_isready
 do
   echo 'waiting for database to be up'
-  sleep 2
+  sleep 200
 done
 
 run_sql() {
