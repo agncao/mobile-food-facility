@@ -28,8 +28,6 @@ ENV LC_ALL en_US.UTF-8
 
 WORKDIR $APP_HOME
 
-COPY --from=build /home/app/java-backend/target/*.jar $APP_HOME/libs/
-COPY --from=build /home/app/socol-api/target/*.jar $APP_HOME/libs/
 COPY --from=build /home/app/app/target/*.jar $APP_HOME/app.jar
 
 COPY ./startup.sh $APP_HOME/

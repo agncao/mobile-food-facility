@@ -10,8 +10,7 @@ public abstract class ClassPathFileReader {
         try {
             return new ClassPathResource(String.format("csv/%s",cvsFileName)).getInputStream();
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
-        return null;
     }
 }
