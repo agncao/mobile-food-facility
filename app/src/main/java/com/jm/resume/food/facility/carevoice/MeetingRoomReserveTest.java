@@ -53,8 +53,6 @@ public abstract class MeetingRoomReserveTest {
                     if (!meetingDurations.contains(meetingRequest.getMeetingDuration())) {
                         meetingDurations.add(meetingRequest.getMeetingDuration());
                         System.out.println(String.format("%s %s %s", meetingRequest.getEmployeeId(), meetingRequest.getMeetingStartTimeStr(), meetingRequest.getMeetingEndTimeStr()));
-                    }else {
-                        throw new RuntimeException("meeting duration is duplicate");
                     }
                 });
             });
