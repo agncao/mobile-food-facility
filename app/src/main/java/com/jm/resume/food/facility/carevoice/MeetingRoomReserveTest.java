@@ -35,6 +35,16 @@ public abstract class MeetingRoomReserveTest {
             scanner.close();
 //            System.out.println(String.format("you have input %s meeting request\n", meetingRequests.size()));
 
+            //check the meeting request list contains the same employee id and request time
+            Set<String> meetingRequestSet = new HashSet<>();
+            meetingRequests.forEach(meetingRequest -> {
+                String meetingRequestStr = String.format("%s::%s", meetingRequest.getEmployeeId(), meetingRequest.getRequestTimeStr());
+                if (meetingRequestSet.contains(meetingRequestStr)) {
+                    throw new RuntimeException("预订提交系统一次只允许一个提交，所以提交时间保证是唯一的");
+                }
+                meetingRequestSet.add(meetingRequestStr);
+            });
+
             // group by the date of meeting request
             Map<String, List<MeetingRequest>> meetingRequestMap = meetingRequests.stream().collect(
                     Collectors.groupingBy(MeetingRequest::getMeetingDateStr)

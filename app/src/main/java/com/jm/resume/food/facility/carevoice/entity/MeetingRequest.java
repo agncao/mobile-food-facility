@@ -3,10 +3,10 @@ package com.jm.resume.food.facility.carevoice.entity;
 import lombok.Builder;
 import lombok.Data;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @Builder
@@ -59,6 +59,11 @@ public class MeetingRequest {
         return getMeetingStartTimeStr() +" " + getMeetingEndTimeStr();
     }
 
+    public String getRequestTimeStr(){
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        return sdf.format(requestTime);
+    }
+
     public static MeetingRequest instance(Date requestTime, String employeeId, Date meetingStartTime, int duration,
                                           Date requestOfficeStartTime, Date requestOfficeEndTime,
                                           Date meetingOfficeStartTime, Date meetingOfficeEndTime) {
@@ -89,14 +94,14 @@ public class MeetingRequest {
         }
         String dateStr = line1Array[0];
         String timeStr = line1Array[1];
-        Date requestTime = parseTime(dateStr + " " + timeStr);
+        Date requestTime = OfficeDateUtils.parseTime(dateStr + " " + timeStr);
         String employeeId = line1Array[2];
 
-        Date requestOfficeStartTime = parseTime(dateStr + " " + officeDuration.getOfficeStartTime());
-        Date requestOfficeEndTime = parseTime(dateStr + " " + officeDuration.getOfficeEndTime());
+        //request time must be in office time
+        List<Date> requestOfficeTimes = officeDuration.getOfficeDateTimes(requestTime);
         if(null!=officeDuration){
-            if(requestTime.before(requestOfficeStartTime) || requestTime.after(requestOfficeEndTime)){
-                throw new IllegalArgumentException("Invalid request time");
+            if(requestTime.before(requestOfficeTimes.get(0)) || requestTime.after(requestOfficeTimes.get(1))){
+                throw new IllegalArgumentException("request time must be in office time");
             }
         }
 
@@ -107,32 +112,30 @@ public class MeetingRequest {
         }
         String meetingDateStr = line2Array[0];
         String meetingTimeStr = line2Array[1];
-        Date meetingReserveTime = parseTime(meetingDateStr + " " + meetingTimeStr);
+        Date meetingTime = OfficeDateUtils.parseTime(meetingDateStr + " " + meetingTimeStr);
 
         //meeting time must be after request time, and must be a work day
-        if(requestTime.after(meetingReserveTime) && !isWorkDay(meetingReserveTime)){
-            throw new IllegalArgumentException("Invalid meeting time");
+        if(requestTime.after(meetingTime) || !OfficeDateUtils.isWorkDay(meetingTime)){
+            throw new IllegalArgumentException(String.format("employeeId:%s meeting time must be after request time, and must be a work day", employeeId));
         }
 
-        //meeting time must be in office time
-        Date meetingOfficeStartTime = parseTime(meetingDateStr + " " + officeDuration.getOfficeStartTime());
-        Date meetingOfficeEndTime = parseTime(meetingDateStr + " " + officeDuration.getOfficeEndTime());
-        if (meetingReserveTime.before(meetingOfficeStartTime) || meetingReserveTime.after(meetingOfficeEndTime)) {
-            throw new IllegalArgumentException(String.format("line2:%s include a invalidate meeting time", line2));
-        }
         int duration = parserDuration(line2Array[2]);
-        return instance(requestTime, employeeId, meetingReserveTime, duration,requestOfficeStartTime,requestOfficeEndTime,meetingOfficeStartTime,meetingOfficeEndTime);
-    }
+        //both meeting start time and end time must be in office time
+        List<Date> meetingOfficeTimes = officeDuration.getOfficeDateTimes(meetingTime);
+        if(null!=officeDuration){
+            if(meetingTime.before(meetingOfficeTimes.get(0)) || meetingTime.after(meetingOfficeTimes.get(1))){
+                throw new IllegalArgumentException(String.format("employeeId:%s both meeting time-start and time-end must be in office time", employeeId));
+            }
 
-    public static Date parseTime(String dateTimeStr) {
-        try {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-            dateFormat.setLenient(false);
-            Date date = dateFormat.parse(dateTimeStr);
-            return date;
-        } catch (ParseException e) {
-            throw new IllegalArgumentException("Invalid time format: " + dateTimeStr, e);
+            if(OfficeDateUtils.addHours(meetingTime, duration).after(meetingOfficeTimes.get(1))){
+                throw new IllegalArgumentException(String.format("employeeId:%s both meeting time-start and time-end must be in office time", employeeId));
+            }
         }
+
+        return instance(requestTime, employeeId, meetingTime, duration,
+                requestOfficeTimes.get(0), requestOfficeTimes.get(1),
+                meetingOfficeTimes.get(0), meetingOfficeTimes.get(1)
+        );
     }
 
     private static int parserDuration(String durationStr){
@@ -141,13 +144,6 @@ public class MeetingRequest {
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException("Invalid duration format: " + durationStr, e);
         }
-    }
-
-    public static boolean isWorkDay(Date date){
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(date);
-        int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
-        return dayOfWeek != Calendar.SATURDAY && dayOfWeek != Calendar.SUNDAY;
     }
 
 }
