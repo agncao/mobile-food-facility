@@ -17,7 +17,11 @@ public abstract class OfficeDateUtils {
         }
     }
 
-
+    /**
+     * the date is work day or not
+     * @param date
+     * @return
+     */
     public static boolean isWorkDay(Date date){
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
@@ -25,6 +29,12 @@ public abstract class OfficeDateUtils {
         return dayOfWeek != Calendar.SATURDAY && dayOfWeek != Calendar.SUNDAY;
     }
 
+    /**
+     * set the date time with a new value
+     * @param date
+     * @param timeStr
+     * @return
+     */
     public static Date parseTime(Date date, String timeStr) {
         try {
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -37,6 +47,12 @@ public abstract class OfficeDateUtils {
         }
     }
 
+    /**
+     * add hours to a date
+     * @param date
+     * @param hours
+     * @return
+     */
     public static Date addHours(Date date, int hours) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
